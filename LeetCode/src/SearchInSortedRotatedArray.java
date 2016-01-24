@@ -8,14 +8,14 @@ public class SearchInSortedRotatedArray
 {
 	public static void main(String[] args)
 	{
-		System.out.println(search(new int[] { 4, 5, 6, 7, 0, 1, 2 }, 7));
+/*		System.out.println(search(new int[] { 4, 5, 6, 7, 0, 1, 2 }, 7));
 		System.out.println(search(new int[] { 4, 5, 6, 7, 0, 1, 2 }, 8));
 		System.out.println(search(new int[] { 7, 0, 1, 2, 4, 5, 6 }, 7));
 
 		System.out.println(search(new int[] { 5, 6, 7, 0, 1, 2, 3 }, 7));
 		System.out.println(search(new int[] { 1, 2, 3, 5, 6, 7, 0 }, 7));
-		System.out.println(search(new int[] { 1, 3 }, 4));
-		System.out.println(search(new int[] { 1, 3 }, 0));
+		System.out.println(search(new int[] { 1, 3 }, 4));*/
+		System.out.println(search(new int[] { 1, 3, 5 }, 2));
 	}
 
 	public static int search(int[] nums, int target)
@@ -26,9 +26,16 @@ public class SearchInSortedRotatedArray
 		// find the pivot
 		int pivot = findPivot(nums, 0, nums.length - 1);
 
-		int start = pivot;
-		int end = (start + nums.length - 1) % nums.length;
-		return search(nums, target, start, end);
+		if (nums[pivot] == target)
+			return pivot;
+
+		if(target > nums[pivot] && target <= nums[nums.length - 1])
+			return search(nums, target, pivot + 1, nums.length - 1);
+
+		if(pivot > 0)
+			return search(nums, target, 0, pivot - 1);
+		
+		return -1;
 	}
 
 	private static int search(int[] nums, int target, int start, int end)
@@ -37,9 +44,7 @@ public class SearchInSortedRotatedArray
 		if (end == start)
 			return nums[start] == target ? start : -1;
 		
-		int n = (end - start + nums.length) % nums.length + 1;
-		// If there are only two elements
-		if(n == 2)
+		if(end - start == 1)
 		{
 			if(nums[start] == target)
 				return start;
@@ -49,13 +54,13 @@ public class SearchInSortedRotatedArray
 		}
 		
 		// If there are more than two elements
-		int mid = (start + n/2 + nums.length) % nums.length;
+		int mid = (start + end) / 2;
 		if (nums[mid] == target)
 			return mid;
 		else if (nums[mid] > target)
-			return search(nums, target, start, (mid - 1 + nums.length) % nums.length);
+			return search(nums, target, start, mid - 1);
 		else
-			return search(nums, target, (mid + 1 + nums.length) % nums.length, end);
+			return search(nums, target, mid + 1, end);
 	}
 
 	private static int findPivot(int[] nums, int start, int end)
